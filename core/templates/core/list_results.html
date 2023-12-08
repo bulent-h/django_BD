@@ -1,0 +1,102 @@
+{% extends "core/main.html" %}
+
+
+{% block content %}
+<h2 class="text-2xl font-bold text-white">
+    Bina Hasar Tespiti Sonuclari
+</h2>
+
+<div class="text-white mt-12">
+    <table class="w-full table-auto border border-slate-500 ">
+        <thead>
+            <tr>
+                <th class="border border-slate-700 p-3 bg-blue-800">
+                    <div class="flex">
+                        ID
+                    </div>
+                </th>
+                <th class="border border-slate-700 p-3 bg-blue-800">
+                    <div class="flex">
+                        Title
+                    </div>
+                </th>
+                <th class="border border-slate-700 p-3 bg-blue-800">
+                    <div class="flex">
+                        Show
+                    </div>
+                </th>
+                <th class="border border-slate-700 p-3 bg-blue-800">
+                    <div class="flex">
+                        Edit
+                    </div>
+                </th>
+                <th class="border border-slate-700 p-3 bg-blue-800">
+                    <div class="flex">
+                        Delete
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result_item in recent_results %}
+            <tr>
+                <td class="border border-slate-700 p-3">
+                    {{result_item.id}}
+                </td>
+                <td class="border border-slate-700 p-3">
+                    {{result_item.title}}
+                </td>
+                <td class="border border-slate-700 p-3">
+                    <a href="{% url 'result' result_item.id %}">
+                        Show
+                    </a>
+                </td>
+                <td class="border border-slate-700 p-3">
+                    <a href="{% url 'edit' result_item.id %}">
+                        Edit
+                    </a>
+                </td>
+                <td class="border border-slate-700 p-3">
+                    <form action="{% url 'delete' result_item.id %}" method="post">
+                        {% csrf_token %}
+                        <button >Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+    function delete_request() {
+
+        var editUrl = "{% url 'delete' 1 %}";
+
+        console.log("Edit URL:", editUrl);
+
+    //     var data = {
+    //         key1: 'value1',
+    //         key2: 'value2'
+    //     };
+
+    //     fetch(url, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(data)
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         // Handle the response here
+    //         console.log(data);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
+    }
+</script>
+
+{% endblock %}
