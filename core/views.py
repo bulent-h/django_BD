@@ -15,9 +15,10 @@ def upload_images(request):
             pre_image = request.FILES['pre_image']
             post_image = request.FILES['post_image']
             
+            # validate_uploaded_images(pre_image, post_image, request,form)
+
             image_pair = form.save()
 
-            validate_uploaded_images(pre_image, post_image, request)
             process_images_with_model(image_pair)
 
             return redirect('result', pk=image_pair.pk)
@@ -63,7 +64,7 @@ def delete_result(request, pk):
     return redirect('list_results')
 
 
-def validate_uploaded_images(pre_image, post_image, request):
+def validate_uploaded_images(pre_image, post_image, request, form):
     def get_image_dimensions(image):
         with Image.open(image) as img:
             return img.size
@@ -71,10 +72,10 @@ def validate_uploaded_images(pre_image, post_image, request):
     min_size = 256
 
     if get_image_dimensions(pre_image) != get_image_dimensions(post_image):
-        return render(request, 'core/upload_images.html', {'form': form, 'recent_results': recent_results})
+        return render(request, 'core/upload_images.html', {'form': form})
     if any(dim <= min_size for dim in get_image_dimensions(pre_image)):
-        return render(request, 'core/upload_images.html', {'form': form, 'recent_results': recent_results})
+        return render(request, 'core/upload_images.html', {'form': form})
     if any(dim <= min_size for dim in get_image_dimensions(post_image)):
-        return render(request, 'core/upload_images.html', {'form': form, 'recent_results': recent_results})
+        return render(request, 'core/upload_images.html', {'form': form})
 
 
