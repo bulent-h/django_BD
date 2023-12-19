@@ -15,9 +15,7 @@ class ImagePairForm(forms.ModelForm):
         pre_image = cleaned_data.get('pre_image')
         post_image = cleaned_data.get('post_image')
 
-        # Check if both images are uploaded
         if pre_image and post_image:
-            # Validate image sizes
             pre_image_size = Image.open(pre_image).size
             post_image_size = Image.open(post_image).size
 

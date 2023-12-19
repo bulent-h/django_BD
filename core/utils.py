@@ -12,6 +12,8 @@ from patchify import patchify, unpatchify
 from sklearn.preprocessing import MinMaxScaler
 from io import BytesIO
 
+
+
 def process_images_with_model(image_pair):
 
     patch_size = 256
@@ -20,17 +22,11 @@ def process_images_with_model(image_pair):
     model = keras.models.load_model('model.keras', 
                                     custom_objects={"Conv2DBNLayer":Conv2DBNLayer ,"MultiResBlock": MultiResBlock,"AttentionBlock":AttentionBlock })
    
-    # pre_image = preprocess_image(image_pair.pre_image)
-    # post_image = preprocess_image(image_pair.post_image)
 
+    pre_img = tf.io.decode_png(tf.io.read_file(image_pair.pre_image.path), channels=3)
+    post_img = tf.io.decode_png(tf.io.read_file(image_pair.post_image.path), channels=3)
 
-    pre_img = imread(image_pair.pre_image)
-    post_img = imread(image_pair.post_image)
-      
     org_shape = pre_img.shape
-
-    print(org_shape)
-
 
     pre_img = expand_image_to_multiple_of_256(pre_img)
     post_img = expand_image_to_multiple_of_256(post_img)
@@ -39,7 +35,6 @@ def process_images_with_model(image_pair):
     SIZE_Y = (pre_img.shape[0]//patch_size)*patch_size 
 
   
-
     large_pre_img = Image.fromarray(pre_img)
     large_post_img = Image.fromarray(post_img)
 
@@ -95,25 +90,23 @@ def process_images_with_model(image_pair):
     
     damage_image = remove_padding(damage_image,org_shape)
     segment_image = remove_padding(segment_image,org_shape)
-
+    
+    image_pair.damage_percentage = calculate_damage(damage_image)
 
     damage_image = convert_to_png(damage_image)
     segment_image = convert_to_png(segment_image)
 
-    # pre_image = np.expand_dims(pre_image, axis=0)
-    # post_image = np.expand_dims(post_image, axis=0)
 
     image_pair.output_damage.save('damage_image.jpg', damage_image)
-    image_pair.output_segment.save('segment_image.jpg', segment_image )
+    image_pair.output_segment.save('segment_image.jpg', segment_image)
 
 
-    # image_pair.output_damage.save('damage_image.jpg', InMemoryUploadedFile(
-    #     BytesIO(damage_image), None, 'damage_image.jpg', 'image/jpeg', len(damage_image), None
-    # ))
-    # image_pair.output_segment.save('segment_image.jpg', InMemoryUploadedFile(
-    #     BytesIO(segment_image), None, 'segment_image.jpg', 'image/jpeg', len(segment_image), None
-    # ))
-
+def calculate_damage(np_image):
+    count_1 = np.count_nonzero(np_image == 1)
+    count_2 = np.count_nonzero(np_image == 2)
+    result = (count_2/(count_1+count_2))*100
+    result = round(result, 3)
+    return result
 
 
 def preprocess_image(image_path):
@@ -159,3 +152,4 @@ def remove_padding(image, original_shape):
     original_image = image[:height, :width]
 
     return original_image
+

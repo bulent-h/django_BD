@@ -6,3 +6,4 @@ class ImagePair(models.Model):
     post_image = models.ImageField(upload_to='post_images/')
     output_segment = models.ImageField(upload_to='segment_masks/', blank=True)
     output_damage = models.ImageField(upload_to='damage_masks/', blank=True)
+    damage_percentage = models.FloatField(blank=True,null=True)

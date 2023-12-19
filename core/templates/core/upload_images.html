@@ -2,11 +2,11 @@
 
 
 {% block content %}
-<h2 class="text-2xl font-bold text-white">
+<h2 class="text-2xl font-bold text-white mb-4 ">
     Bina Hasar Tespiti
 </h2>
 
-<div>
+<div class="text-white bg-gray-500/50 px-8 py-2 rounded-2xl ">
     <form method="post" enctype="multipart/form-data" action="{% url 'upload_images' %}">
         {% csrf_token %}
 
@@ -21,22 +21,58 @@
             </div>
 
             <div class="grid grid-cols-2 gap-4">
+
+                <!-- <input type="file" name="pre_image" id="id_pre_image1" onchange="previewImage(event, 'id_pre_image1', 'image-preview1', 'deleteButton1')">
+                <button onclick="deleteImage('id_pre_image', 'preview_pre', 'deleteButton_pre')" class="hidden" id="deleteButton_pre">Delete</button>
+                <br>
+                <img id="image-preview1" src="#" alt="Preview" style="max-width: 100%; max-height: 200px;" class="hidden">
+               -->
+
+
+
                 <div>
                     <label for="id_pre_image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pre
                         Image:</label>
                     <input type="file" name="pre_image" id="id_pre_image"
+                        onchange="previewImage(event, 'id_pre_image', 'preview_pre', 'deleteButton_pre')"
                         class="block w-full h-10 file:h-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 rounded-2xl file:border-0 file:text-sm file:font-semibold bg-white file:text-blue-700 hover:file:bg-blue-100">
                     {{ form.pre_image.errors }}
+                    <button onclick="deleteImage('id_pre_image', 'preview_pre', 'deleteButton_pre')" class="hidden"
+                        id="deleteButton_pre" type="button">Delete</button>
+
                 </div>
 
                 <div>
                     <label for="id_post_image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Post
                         Image:</label>
                     <input type="file" name="post_image" id="id_post_image"
+                        onchange="previewImage(event, 'id_post_image', 'preview_post', 'deleteButton_post')"
                         class="block w-full h-10 file:h-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 rounded-2xl file:border-0 file:text-sm file:font-semibold bg-white file:text-blue-700 hover:file:bg-blue-100">
+                    <button onclick="deleteImage('id_post_image', 'preview_post', 'deleteButton_post')" class="hidden"
+                        id="deleteButton_post" type="button">Delete</button>
+
                     {{ form.post_image.errors }}
                 </div>
             </div>
+        </div>
+
+        <img id="preview_pre" src="#" alt="Preview" class="hidden" style="max-width: 100%; max-height: 200px;">
+        <img id="preview_post" src="#" alt="Preview" class="hidden" style="max-width: 100%; max-height: 200px;">
+
+        <div>
+            <!-- {% if form.errors %}
+            <div class="error-message">
+                <p>{{ form.errors }}</p>
+            </div>
+            {% endif %} -->
+            {% if form.non_field_errors %}
+            <div class="error-message">
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
         </div>
 
         <div class="flex justify-center my-4">
@@ -52,6 +88,41 @@
 </div>
 
 
+<script>
+    function previewImage(event, inputId, previewId, deleteButtonId) {
+        var input = document.getElementById(inputId);
+        var preview = document.getElementById(previewId);
+        var deleteButton = document.getElementById(deleteButtonId);
 
+        var reader = new FileReader();
+
+        reader.onload = function () {
+            preview.src = reader.result;
+            // Show the image preview and delete button
+            preview.classList.remove('hidden');
+            deleteButton.classList.remove('hidden');
+        };
+
+        // Read the uploaded file as a data URL
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function deleteImage(inputId, previewId, deleteButtonId) {
+        var input = document.getElementById(inputId);
+        var preview = document.getElementById(previewId);
+        var deleteButton = document.getElementById(deleteButtonId);
+
+        // Clear the file input
+        input.value = '';
+
+        // Reset the image preview
+        preview.src = '';
+
+        // Hide the image preview and delete button
+        preview.classList.add('hidden');
+        deleteButton.classList.add('hidden');
+    }
+
+</script>
 
 {% endblock %}

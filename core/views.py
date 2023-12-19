@@ -12,16 +12,11 @@ def upload_images(request):
 
         if form.is_valid():
 
-            pre_image = request.FILES['pre_image']
-            post_image = request.FILES['post_image']
-            
-            # validate_uploaded_images(pre_image, post_image, request,form)
-
             image_pair = form.save()
-
             process_images_with_model(image_pair)
 
             return redirect('result', pk=image_pair.pk)
+        
     else:
         form = ImagePairForm()
     return render(request, 'core/upload_images.html', {'form': form})
