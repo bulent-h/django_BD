@@ -35,19 +35,25 @@ def process_images_with_model(image_pair):
     SIZE_Y = (pre_img.shape[0]//patch_size)*patch_size 
 
   
-    large_pre_img = Image.fromarray(pre_img)
-    large_post_img = Image.fromarray(post_img)
+    large_pre_img=pre_img
+    large_post_img=post_img
+    # large_pre_img = Image.fromarray(pre_img)
+    # large_post_img = Image.fromarray(post_img)
 
-    large_pre_img = large_pre_img.crop((0 ,0, SIZE_X, SIZE_Y))  
-    large_post_img = large_post_img.crop((0 ,0, SIZE_X, SIZE_Y))  
+    # large_pre_img = large_pre_img.crop((0 ,0, SIZE_X, SIZE_Y))  
+    # large_post_img = large_post_img.crop((0 ,0, SIZE_X, SIZE_Y))  
 
-    large_pre_img = np.array(large_pre_img)
-    large_post_img = np.array(large_post_img)
+    # large_pre_img = np.array(large_pre_img)
+    # large_post_img = np.array(large_post_img)
 
     patches_pre_img = patchify(large_pre_img, (patch_size, patch_size, 3), step=patch_size)
     patches_post_img = patchify(large_post_img, (patch_size, patch_size, 3), step=patch_size)
 
+    print(patches_pre_img.shape)
     patches_pre_img = patches_pre_img[:,:,0,:,:,:]
+
+    print(patches_pre_img.shape)
+
     patches_post_img = patches_post_img[:,:,0,:,:,:]
     patched_pred_segment = []
     patched_pred_damage = []
@@ -58,17 +64,18 @@ def process_images_with_model(image_pair):
             single_patch_pre_img = patches_pre_img[i,j,:,:,:]
             single_patch_post_img = patches_post_img[i,j,:,:,:]
 
-            single_patch_pre_img = scaler.fit_transform(single_patch_pre_img.reshape(-1, single_patch_pre_img.shape[-1])).reshape(single_patch_pre_img.shape)
+            single_patch_pre_img = scaler.fit_transform(single_patch_pre_img.reshape(-1, 
+                single_patch_pre_img.shape[-1])).reshape(single_patch_pre_img.shape)
             single_patch_pre_img = np.expand_dims(single_patch_pre_img, axis=0)
 
-            single_patch_post_img = scaler.fit_transform(single_patch_post_img.reshape(-1, single_patch_post_img.shape[-1])).reshape(single_patch_post_img.shape)
+            single_patch_post_img = scaler.fit_transform(single_patch_post_img.reshape(-1, 
+                single_patch_post_img.shape[-1])).reshape(single_patch_post_img.shape)
             single_patch_post_img = np.expand_dims(single_patch_post_img, axis=0)
 
             pred_post_damage, pred_pre_segment = model.predict([single_patch_pre_img, single_patch_post_img])
 
             damage_pred = np.argmax(pred_post_damage, axis=-1)
             segment_pred = np.argmax(pred_pre_segment, axis=-1)
-
 
             patched_pred_damage.append(damage_pred)
             patched_pred_segment.append(segment_pred)
@@ -103,8 +110,8 @@ def process_images_with_model(image_pair):
 
 def calculate_damage(np_image):
     count_1 = np.count_nonzero(np_image == 1)
-    count_2 = np.count_nonzero(np_image == 2)
-    result = (count_2/(count_1+count_2))*100
+    count_3 = np.count_nonzero(np_image == 3)
+    result = (count_3/(count_1 + count_3))*100
     result = round(result, 3)
     return result
 
@@ -117,9 +124,10 @@ def preprocess_image(image_path):
 
 def convert_to_png(class_array):
     color_map = {
-        0: (0, 0, 0),
-        1: (255, 255, 255),
-        2: (255, 0, 0)
+      0: (0, 0, 0),
+      1: (255, 255, 255),
+      2: (255, 255, 0),
+      3: (255, 0, 0)
     }
     height, width = class_array.shape
     rgb_image = np.zeros((height, width, 3), dtype=np.uint8)

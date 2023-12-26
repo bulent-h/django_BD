@@ -14,7 +14,7 @@
         <div class="flex flex-col space-y-4 my-8">
             <div>
                 <label for="id_title"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title:</label>
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Başlık:</label>
                 <input type="text" name="title" id="id_title" value=""
                     class="px-4 block w-full h-10 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 rounded-2xl file:rounded-xl file:border-0 file:text-sm file:font-semibold bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 ">
                 {{ form.title.errors }}
@@ -22,17 +22,8 @@
 
             <div class="grid grid-cols-2 gap-4">
 
-                <!-- <input type="file" name="pre_image" id="id_pre_image1" onchange="previewImage(event, 'id_pre_image1', 'image-preview1', 'deleteButton1')">
-                <button onclick="deleteImage('id_pre_image', 'preview_pre', 'deleteButton_pre')" class="hidden" id="deleteButton_pre">Delete</button>
-                <br>
-                <img id="image-preview1" src="#" alt="Preview" style="max-width: 100%; max-height: 200px;" class="hidden">
-               -->
-
-
-
                 <div>
-                    <label for="id_pre_image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pre
-                        Image:</label>
+                    <label for="id_pre_image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Felaketten önceki görüntü:</label>
                     <input type="file" name="pre_image" id="id_pre_image"
                         onchange="previewImage(event, 'id_pre_image', 'preview_pre', 'deleteButton_pre')"
                         class="block w-full h-10 file:h-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 rounded-2xl file:border-0 file:text-sm file:font-semibold bg-white file:text-blue-700 hover:file:bg-blue-100">
@@ -43,8 +34,7 @@
                 </div>
 
                 <div>
-                    <label for="id_post_image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Post
-                        Image:</label>
+                    <label for="id_post_image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Felaketten sonraki görüntü:</label>
                     <input type="file" name="post_image" id="id_post_image"
                         onchange="previewImage(event, 'id_post_image', 'preview_post', 'deleteButton_post')"
                         class="block w-full h-10 file:h-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 rounded-2xl file:border-0 file:text-sm file:font-semibold bg-white file:text-blue-700 hover:file:bg-blue-100">
@@ -53,11 +43,18 @@
 
                     {{ form.post_image.errors }}
                 </div>
+
+                <div>
+
+                    <img id="preview_pre" src="#" alt="Preview" class="w-full p-2 rounded-2xl hidden">
+
+                </div>
+                <div>
+                    <img id="preview_post" src="#" alt="Preview" class="w-full p-2 rounded-2xl hidden">
+
+                </div>
             </div>
         </div>
-
-        <img id="preview_pre" src="#" alt="Preview" class="hidden" style="max-width: 100%; max-height: 200px;">
-        <img id="preview_post" src="#" alt="Preview" class="hidden" style="max-width: 100%; max-height: 200px;">
 
         <div>
             <!-- {% if form.errors %}
@@ -98,12 +95,10 @@
 
         reader.onload = function () {
             preview.src = reader.result;
-            // Show the image preview and delete button
             preview.classList.remove('hidden');
             deleteButton.classList.remove('hidden');
         };
 
-        // Read the uploaded file as a data URL
         reader.readAsDataURL(input.files[0]);
     }
 
@@ -112,13 +107,10 @@
         var preview = document.getElementById(previewId);
         var deleteButton = document.getElementById(deleteButtonId);
 
-        // Clear the file input
         input.value = '';
 
-        // Reset the image preview
         preview.src = '';
 
-        // Hide the image preview and delete button
         preview.classList.add('hidden');
         deleteButton.classList.add('hidden');
     }
